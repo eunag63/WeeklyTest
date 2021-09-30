@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
+
+    <title>스파르타코딩클럽 | 부트스트랩 연습하기</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nanum+Myeongjo:wght@800&display=swap" rel="stylesheet">
+    <style>
+        .wrap {
+            width: 900px;
+            margin: auto;
+
+        }
+    </style>
+    <script>
+        $(document).ready(function () {
+            show()
+
+        });
+
+        function next() {
+            let radio1 = $('#flexRadioDefault1').val()
+            let radio2 = $('#flexRadioDefault2').val()
+
+            $.ajax({
+                type: "POST",
+                url: "/memo",
+                data: {first_give: radio1, second_give: radio2},
+                success: function (response) {
+                    alert(response["msg"]);
+                }
+            })
+        }
+
+        function show() {
+            $.ajax({
+                type: "GET",
+                url: "/cho",
+                data: {},
+                success: function (response) {
+                    let cho = response['all_chosies']
+                    for (let i = 0; i < cho.length; i++) {
+                        let codes = cho[i]['codes']
+
+                        let temp_html = `<div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault1">
+                                            <label class="form-check-label" for="flexRadioDefault1">
+                                                ${codes}
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="radio" name="flexRadioDefault" id="flexRadioDefault2" checked>
+                                            <label class="form-check-label" for="flexRadioDefault2">
+                                                ${codes}
+                                            </label>
+                                            <button onclick="next()" type="button" class="btn btn-primary">다음</button>
+                                        </div>`
+                        $('#radios').append(temp_html)
+                    }
+                }
+            })
+        }
+
+
+    </script>
+</head>
+
+<body>
+<div class="wrap">
+    <div>
+        <h1>주식 종목 추천 !!</h1>
+        <p>원하는 종목 추천</p>
+        <hr>
+
+        <div id="radios">
+
+        </div>
+
+
+    </div>
+
+</body>
+
+</html>
