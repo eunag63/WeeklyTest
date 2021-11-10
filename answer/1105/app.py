@@ -1,5 +1,6 @@
 from datetime import datetime, timedelta
 from functools import wraps
+from flask_socketio import SocketIO, emit
 
 from flask import Flask, render_template, jsonify, request, Response, g
 from pymongo import MongoClient
@@ -12,6 +13,9 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client.dbStock
 secret = "secrete"
 algorithm = "HS256"
+
+# 소캣을 위한 설정
+socketio = SocketIO(app)
 
 
 def login_check(f):
@@ -175,18 +179,18 @@ def login_user():
 
 # 댓글기능
 @app.route('/comment', methods=['POST'])
+# 이게 있어야지 로그인 id 확인 가능
+@login_check
 def save_comment():
     comment_give = request.form['comment_give']
     idx_give = request.form['idx_give']
 
-    # db.article.update(
-    #     {'idx': idx_give},
-    #     {'$push': {'comment': comment_give}}
-    # )
-
     post = {'idx': int(idx_give), 'comment': comment_give, 'writer': (g.user_id if hasattr(g, 'user_id') else '')}
     db.comment.insert_one(post)
 
+    # 실시간 알림 기능
+    article = db.article.find_one({'idx': int(idx_give)})
+    socketio.emit(article['writer'], "ok")
 
     return jsonify({'result': 'success', 'msg': '저장완료'})
 

@@ -267,6 +267,9 @@
                     alert("로그인 되었습니다!!");
                     $('#loginModal').modal('hide');
                     loginCheck();
+
+                    // 실시간 알림
+                    onSocket($("#login-id").val())
                 }
             })
         }
@@ -362,6 +365,13 @@
 
                     $("#modal-comment").append(comments)
                 }
+            })
+        }
+
+        function onSocket(id) {
+            var socket = io.connect('http://localhost:5000');
+            socket.on(id, function () {
+                alert("작성하신 글에 댓글이 달렸어요!!");
             })
         }
 
